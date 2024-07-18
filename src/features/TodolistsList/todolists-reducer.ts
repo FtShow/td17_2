@@ -1,7 +1,7 @@
-import { todolistsAPI, TodolistType } from "../../api/todolists-api"
+import { todolistsAPI, TodolistType } from "api/todolists-api"
 import { Dispatch } from "redux"
-import { handleServerNetworkError } from "../../utils/error-utils"
-import { AppThunk } from "../../app/store"
+import { handleServerNetworkError } from "utils/error-utils"
+import { AppThunk } from "app/store"
 import { RequestStatusType, setAppStatus } from "app/app-reducer"
 import { createSlice, PayloadAction } from "@reduxjs/toolkit"
 
@@ -32,13 +32,12 @@ const slice = createSlice({
       }
     },
     setTodolists: (state, action: PayloadAction<{ todolist: TodolistType[] }>) => {
-      action.payload.todolist.forEach((tl) => {
-        state.push({ ...tl, filter: "all", entityStatus: "idle" })
-      })
+      return action.payload.todolist.map((tl: TodolistType) => ({ ...tl, filter: "all", entityStatus: "idle" }))
     },
   },
 })
 export const { changeTodolistTitle, changeTodolistFilter, setTodolists, addTodolist, removeTodolist } = slice.actions
+export const todolistsReducer = slice.reducer
 // export const todolistsReducer = (
 //   state: Array<TodolistDomainType> = initialState,
 //   action: ActionsType,
@@ -122,8 +121,8 @@ export const addTodolistTC = (title: string): AppThunk => {
     })
   }
 }
-export const changeTodolistTitleTC = (id: string, title: string) => {
-  return (dispatch: Dispatch<ActionsType>) => {
+export const changeTodolistTitleTC = (id: string, title: string): AppThunk => {
+  return (dispatch) => {
     todolistsAPI.updateTodolist(id, title).then((res) => {
       dispatch(changeTodolistTitle({ id, title }))
     })
@@ -132,16 +131,8 @@ export const changeTodolistTitleTC = (id: string, title: string) => {
 
 // types
 
-type ActionsType =
-  | RemoveTodolistActionType
-  | AddTodolistActionType
-  | ReturnType<typeof changeTodolistTitleAC>
-  | ReturnType<typeof changeTodolistFilterAC>
-  | SetTodolistsActionType
-  | ReturnType<typeof changeTodolistEntityStatusAC>
 export type FilterValuesType = "all" | "active" | "completed"
 export type TodolistDomainType = TodolistType & {
   filter: FilterValuesType
   entityStatus: RequestStatusType
 }
-type ThunkDispatch = Dispatch<ActionsType>
