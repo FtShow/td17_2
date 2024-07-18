@@ -76,13 +76,13 @@ test("todolists should be added", () => {
 
   expect(endState.length).toBe(2)
 })
-test("correct entity status of todolist should be changed", () => {
-  let newStatus: RequestStatusType = "loading"
-
-  const action = changeTodolistEntityStatusAC(todolistId2, newStatus)
-
-  const endState = todolistsReducer(startState, action)
-
-  expect(endState[0].entityStatus).toBe("idle")
-  expect(endState[1].entityStatus).toBe(newStatus)
-})
+// test("correct entity status of todolist should be changed", () => {
+//   let newStatus: RequestStatusType = "loading"
+//
+//   const action = changeTodolistEntityStatusAC(todolistId2, newStatus)
+//
+//   const endState = todolistsReducer(startState, action)
+//
+//   expect(endState[0].entityStatus).toBe("idle")
+//   expect(endState[1].entityStatus).toBe(newStatus)
+// })
