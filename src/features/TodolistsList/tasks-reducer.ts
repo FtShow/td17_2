@@ -1,8 +1,8 @@
 import { AddTodolistActionType, RemoveTodolistActionType, SetTodolistsActionType } from "./todolists-reducer"
 import { TaskPriorities, TaskStatuses, TaskType, todolistsAPI, UpdateTaskModelType } from "../../api/todolists-api"
 import { Dispatch } from "redux"
-import { AppRootStateType } from "../../app/store"
-import { setAppErrorAC, SetAppErrorActionType, setAppStatusAC, SetAppStatusActionType } from "../../app/app-reducer"
+import { AppRootStateType, AppThunk } from "../../app/store"
+import { setAppStatusAC, SetAppStatusActionType } from "../../app/app-reducer"
 import { handleServerAppError, handleServerNetworkError } from "../../utils/error-utils"
 
 const initialState: TasksStateType = {}
@@ -65,8 +65,8 @@ export const removeTaskTC = (taskId: string, todolistId: string) => (dispatch: D
   })
 }
 export const addTaskTC =
-  (title: string, todolistId: string) =>
-  (dispatch: Dispatch<ActionsType | SetAppErrorActionType | SetAppStatusActionType>) => {
+  (title: string, todolistId: string): AppThunk =>
+  (dispatch) => {
     dispatch(setAppStatusAC("loading"))
     todolistsAPI
       .createTask(todolistId, title)
@@ -85,8 +85,8 @@ export const addTaskTC =
       })
   }
 export const updateTaskTC =
-  (taskId: string, domainModel: UpdateDomainTaskModelType, todolistId: string) =>
-  (dispatch: ThunkDispatch, getState: () => AppRootStateType) => {
+  (taskId: string, domainModel: UpdateDomainTaskModelType, todolistId: string): AppThunk =>
+  (dispatch, getState: () => AppRootStateType) => {
     const state = getState()
     const task = state.tasks[todolistId].find((t) => t.id === taskId)
     if (!task) {
@@ -140,4 +140,4 @@ type ActionsType =
   | RemoveTodolistActionType
   | SetTodolistsActionType
   | ReturnType<typeof setTasksAC>
-type ThunkDispatch = Dispatch<ActionsType | SetAppStatusActionType | SetAppErrorActionType>
+type ThunkDispatch = Dispatch<ActionsType | SetAppStatusActionType>
